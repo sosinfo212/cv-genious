@@ -5,16 +5,15 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { auth } from '@/lib/firebase';
 import { useToast } from "@/hooks/use-toast";
 import { useState } from 'react';
 import { Loader } from 'lucide-react';
+import { useAuth } from '@/components/auth/auth-provider';
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required.' }),
@@ -27,6 +26,7 @@ export default function RegisterPage() {
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
+    const { login } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -41,18 +41,15 @@ export default function RegisterPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-            if (userCredential.user) {
-              await updateProfile(userCredential.user, {
-                  displayName: `${values.firstName} ${values.lastName}`,
-              });
-            }
+            await login({
+                email: values.email,
+                displayName: `${values.firstName} ${values.lastName}`,
+            });
 
             toast({
                 title: "Account Created",
                 description: "You have been successfully registered.",
             });
-            router.push('/dashboard');
         } catch (error: any) {
             console.error(error);
             toast({
