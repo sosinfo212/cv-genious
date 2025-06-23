@@ -1,0 +1,177 @@
+'use client';
+
+import { useFormState, useFormStatus } from 'react-dom';
+import { handleCvTailoring, State } from './actions';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Terminal, Bot, Loader, Download, Copy, FileText, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useToast } from "@/hooks/use-toast"
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? (
+        <>
+          <Loader className="mr-2 h-4 w-4 animate-spin" />
+          Generating...
+        </>
+      ) : (
+        <>
+          <Bot className="mr-2 h-4 w-4" />
+          Generate Documents
+        </>
+      )}
+    </Button>
+  );
+}
+
+export default function DashboardPage() {
+  const initialState: State = { message: null, errors: {} };
+  const [state, dispatch] = useFormState(handleCvTailoring, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  const { toast } = useToast();
+  const [copied, setCopied] = useState<'cv' | 'letter' | null>(null);
+
+  useEffect(() => {
+    if (state.message && state.message.startsWith('An unexpected error')) {
+      toast({
+        variant: "destructive",
+        title: "Oh no! Something went wrong.",
+        description: state.message,
+      })
+    }
+    if (state.data) {
+      formRef.current?.reset();
+    }
+  }, [state, toast]);
+
+  const handleCopy = (content: string, type: 'cv' | 'letter') => {
+    navigator.clipboard.writeText(content);
+    setCopied(type);
+    toast({
+      title: "Copied to clipboard!",
+      description: `Your ${type === 'cv' ? 'tailored CV' : 'cover letter'} has been copied.`,
+    })
+    setTimeout(() => setCopied(null), 2000);
+  }
+
+  const handleDownload = (content: string, filename: string) => {
+    // This is a placeholder for actual DOCX/PDF generation
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({
+        title: "Download Started",
+        description: `Downloading ${filename}.txt.`,
+      })
+  }
+
+  return (
+    <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6">
+      <div className="grid gap-8 md:grid-cols-12">
+        <div className="md:col-span-4 lg:col-span-3">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Create New</CardTitle>
+              <CardDescription>Fill in the details below to generate your documents.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form ref={formRef} action={dispatch} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="jobLink">Job Post Link</Label>
+                  <Input id="jobLink" name="jobLink" placeholder="linkedin.com/jobs/..." required />
+                  {state.errors?.jobLink && (
+                    <p className="text-sm font-medium text-destructive">{state.errors.jobLink}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cv">Upload Your CV</Label>
+                  <Input id="cv" name="cv" type="file" required accept=".pdf,.doc,.docx" />
+                  {state.errors?.cv && (
+                    <p className="text-sm font-medium text-destructive">{state.errors.cv}</p>
+                  )}
+                </div>
+                <SubmitButton />
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="md:col-span-8 lg:col-span-9">
+          {state.data ? (
+            <Tabs defaultValue="cv">
+              <div className="flex items-center justify-between">
+                <TabsList>
+                  <TabsTrigger value="cv">Tailored CV</TabsTrigger>
+                  <TabsTrigger value="letter">Cover Letter</TabsTrigger>
+                </TabsList>
+                <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => handleDownload(state.data?.tailoredCv ?? '', 'tailored-cv')}>
+                        <Download className="mr-2 h-4 w-4"/>
+                        Download
+                    </Button>
+                </div>
+              </div>
+              <TabsContent value="cv" className="mt-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="font-headline">Tailored CV</CardTitle>
+                      <CardDescription>Your CV optimized for the job.</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => handleCopy(state.data?.tailoredCv ?? '', 'cv')}>
+                        {copied === 'cv' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea className="min-h-[60vh] font-mono text-sm" defaultValue={state.data.tailoredCv} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="letter" className="mt-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="font-headline">Cover Letter</CardTitle>
+                      <CardDescription>A compelling letter to introduce you.</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => handleCopy(state.data?.coverLetter ?? '', 'letter')}>
+                        {copied === 'letter' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea className="min-h-[60vh] text-sm leading-relaxed" defaultValue={state.data.coverLetter} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="flex h-full min-h-[60vh] items-center justify-center rounded-lg border border-dashed">
+              <div className="text-center">
+                <div className="rounded-full bg-secondary p-4 inline-block">
+                    <FileText className="h-12 w-12 text-muted-foreground" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold font-headline">Your documents will appear here</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Fill out the form to get started.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
