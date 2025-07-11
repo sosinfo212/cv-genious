@@ -31,8 +31,13 @@ const authRoutes = ['/login', '/register'];
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Simulate initial auth check
   useEffect(() => {
@@ -66,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || !mounted) return;
 
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
     const isAuthRoute = authRoutes.includes(pathname);
@@ -78,9 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isAuthRoute && user) {
       router.push('/dashboard');
     }
-  }, [loading, user, pathname, router]);
+  }, [loading, user, pathname, router, mounted]);
 
-  if (loading) {
+  if (loading || !mounted) {
     return (
         <div className="flex h-screen items-center justify-center">
             <Loader className="h-8 w-8 animate-spin" />
