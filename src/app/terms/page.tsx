@@ -1,7 +1,16 @@
 // src/app/terms/page.tsx
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
 
 export default function TermsOfServicePage() {
+  const [lastUpdated, setLastUpdated] = useState('');
+
+  useEffect(() => {
+    setLastUpdated(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
+
   return (
     <div className="w-full bg-background text-foreground">
       <div className="container mx-auto px-4 py-16 md:px-6 md:py-24">
@@ -22,7 +31,7 @@ export default function TermsOfServicePage() {
           </Card>
 
           <div className="space-y-8 text-muted-foreground">
-            <p>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p>Last updated: {lastUpdated || '...'}</p>
             <p>
               Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the CV Genius AI website (the "Service") operated by CV Genius AI ("us", "we", or "our").
             </p>
