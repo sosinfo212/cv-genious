@@ -1,3 +1,4 @@
+// src/app/dashboard/page.tsx
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
@@ -8,8 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Bot, Loader, Download, Copy, FileText, Check } from 'lucide-react';
+import { Bot, Loader, Download, Copy, FileText, Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useToast } from "@/hooks/use-toast"
 
@@ -63,7 +63,6 @@ export default function DashboardPage() {
   }
 
   const handleDownload = (content: string, filename: string) => {
-    // This is a placeholder for actual DOCX/PDF generation
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -80,12 +79,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8 md:px-6">
+    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+       <div className="flex items-center justify-between space-y-2">
+        <h2 className="text-3xl font-bold tracking-tight">CV Generator</h2>
+      </div>
       <div className="grid gap-8 md:grid-cols-12">
         <div className="md:col-span-4 lg:col-span-3">
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline">Create New</CardTitle>
+              <CardTitle>Create New</CardTitle>
               <CardDescription>Fill in the details below to generate your documents.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -120,7 +122,11 @@ export default function DashboardPage() {
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => handleDownload(state.data?.tailoredCv ?? '', 'tailored-cv')}>
                         <Download className="mr-2 h-4 w-4"/>
-                        Download
+                        Download CV
+                    </Button>
+                     <Button variant="outline" size="sm" onClick={() => handleDownload(state.data?.coverLetter ?? '', 'cover-letter')}>
+                        <Download className="mr-2 h-4 w-4"/>
+                        Download Letter
                     </Button>
                 </div>
               </div>
@@ -128,7 +134,7 @@ export default function DashboardPage() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                      <CardTitle className="font-headline">Tailored CV</CardTitle>
+                      <CardTitle>Tailored CV</CardTitle>
                       <CardDescription>Your CV optimized for the job.</CardDescription>
                     </div>
                     <Button variant="ghost" size="icon" onClick={() => handleCopy(state.data?.tailoredCv ?? '', 'cv')}>
@@ -144,7 +150,7 @@ export default function DashboardPage() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                      <CardTitle className="font-headline">Cover Letter</CardTitle>
+                      <CardTitle>Cover Letter</CardTitle>
                       <CardDescription>A compelling letter to introduce you.</CardDescription>
                     </div>
                     <Button variant="ghost" size="icon" onClick={() => handleCopy(state.data?.coverLetter ?? '', 'letter')}>
@@ -158,12 +164,12 @@ export default function DashboardPage() {
               </TabsContent>
             </Tabs>
           ) : (
-            <div className="flex h-full min-h-[60vh] items-center justify-center rounded-lg border border-dashed">
+            <div className="flex h-full min-h-[70vh] items-center justify-center rounded-lg border border-dashed">
               <div className="text-center">
                 <div className="rounded-full bg-secondary p-4 inline-block">
                     <FileText className="h-12 w-12 text-muted-foreground" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold font-headline">Your documents will appear here</h3>
+                <h3 className="mt-4 text-lg font-semibold">Your documents will appear here</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Fill out the form to get started.
                 </p>
