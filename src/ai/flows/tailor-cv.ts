@@ -12,7 +12,8 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const TailorCvInputSchema = z.object({
-  jobLink: z.string().describe('A link to the job description.'),
+  jobLink: z.string().optional().describe('A link to the job description.'),
+  jobDescription: z.string().optional().describe('The job description text.'),
   cvDataUri: z
     .string()
     .describe(
@@ -22,8 +23,8 @@ const TailorCvInputSchema = z.object({
 export type TailorCvInput = z.infer<typeof TailorCvInputSchema>;
 
 const TailorCvOutputSchema = z.object({
-  tailoredCv: z.string().describe('The tailored CV content.'),
-  coverLetter: z.string().describe('The generated cover letter content.'),
+  tailoredCv: z.string().describe('The tailored CV content in Markdown format.'),
+  coverLetter: z.string().describe('The generated cover letter content in Markdown format.'),
 });
 export type TailorCvOutput = z.infer<typeof TailorCvOutputSchema>;
 
@@ -35,22 +36,22 @@ const prompt = ai.definePrompt({
   name: 'tailorCvPrompt',
   input: {schema: TailorCvInputSchema},
   output: {schema: TailorCvOutputSchema},
-  prompt: `You are an expert resume writer and career advisor. A user will provide you with their existing CV and a link to a job description.
+  prompt: `You are an expert resume writer and career advisor. A user will provide you with their existing CV and either a link to a job description or the job description text itself.
 
   Your task is to:
-  1. Analyze the job description from the provided link and identify the key skills, experience, and qualifications required for the position.
+  1. Analyze the job description from the provided link or text to identify the key skills, experience, and qualifications required for the position. Prioritize the job description text if both are provided.
   2. Review the user's CV and identify areas where it can be improved to better match the job description. This may involve re-wording existing content, adding new sections, or highlighting specific achievements.
-  3. Generate a tailored CV that is optimized for the specific job description. The tailored CV should be ATS-friendly and highlight the user's most relevant skills and experience.
-  4. Generate a cover letter that is tailored to the specific job description. The cover letter should introduce the user, highlight their key qualifications, and express their interest in the position.
+  3. Generate a tailored CV that is optimized for the specific job description. The tailored CV should be ATS-friendly and highlight the user's most relevant skills and experience. The output should be in Markdown format.
+  4. Generate a cover letter that is tailored to the specific job description. The cover letter should introduce the user, highlight their key qualifications, and express their interest in the position. The output should be in Markdown format.
 
+  {{#if jobDescription}}
+  Job Description: {{{jobDescription}}}
+  {{else}}
   Job Description Link: {{{jobLink}}}
+  {{/if}}
+  
   User's CV: {{media url=cvDataUri}}
-
-  Tailored CV:
-  {{$jsonValue=tailoredCv}}
-
-  Cover Letter:
-  {{$jsonValue=coverLetter}}`,
+`,
 });
 
 const tailorCvFlow = ai.defineFlow(

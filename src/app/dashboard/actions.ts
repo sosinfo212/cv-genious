@@ -4,14 +4,20 @@ import { tailorCv, TailorCvOutput } from '@/ai/flows/tailor-cv';
 import { z } from 'zod';
 
 const FormSchema = z.object({
-  jobLink: z.string().url({ message: 'Please enter a valid URL.' }),
+  jobLink: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
+  jobDescription: z.string().optional(),
   cv: z.any().refine(file => file?.size > 0, 'CV is required.'),
+}).refine(data => data.jobLink || data.jobDescription, {
+    message: 'Either a Job Post Link or a Job Description is required.',
+    path: ['jobLink'], // or provide a path to a custom field
 });
+
 
 export type State = {
   message?: string | null;
   errors?: {
     jobLink?: string[];
+    jobDescription?: string[];
     cv?: string[];
   };
   data?: TailorCvOutput;
@@ -20,6 +26,7 @@ export type State = {
 export async function handleCvTailoring(prevState: State, formData: FormData): Promise<State> {
   const validatedFields = FormSchema.safeParse({
     jobLink: formData.get('jobLink'),
+    jobDescription: formData.get('jobDescription'),
     cv: formData.get('cv'),
   });
 
@@ -30,7 +37,7 @@ export async function handleCvTailoring(prevState: State, formData: FormData): P
     };
   }
 
-  const { jobLink, cv: file } = validatedFields.data;
+  const { jobLink, jobDescription, cv: file } = validatedFields.data;
 
   try {
     const cvBuffer = await file.arrayBuffer();
@@ -39,6 +46,7 @@ export async function handleCvTailoring(prevState: State, formData: FormData): P
 
     const result = await tailorCv({
       jobLink,
+      jobDescription,
       cvDataUri,
     });
     

@@ -95,9 +95,26 @@ export default function DashboardPage() {
               <form ref={formRef} action={dispatch} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="jobLink">Job Post Link</Label>
-                  <Input id="jobLink" name="jobLink" placeholder="linkedin.com/jobs/..." required />
+                  <Input id="jobLink" name="jobLink" placeholder="linkedin.com/jobs/..." />
                   {state.errors?.jobLink && (
                     <p className="text-sm font-medium text-destructive">{state.errors.jobLink}</p>
+                  )}
+                </div>
+                <div className="relative text-center my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">
+                      Or
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="jobDescription">Paste Job Description</Label>
+                  <Textarea id="jobDescription" name="jobDescription" placeholder="Paste the full job description here..." className="min-h-[150px]" />
+                   {state.errors?.jobDescription && (
+                    <p className="text-sm font-medium text-destructive">{state.errors.jobDescription}</p>
                   )}
                 </div>
                 <div className="space-y-2">
