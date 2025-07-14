@@ -53,7 +53,7 @@ export default function AdminDashboardPage() {
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>System Status</CardTitle>
-          </Header>
+          </CardHeader>
           <CardContent>
             <p>All systems operational.</p>
           </CardContent>
