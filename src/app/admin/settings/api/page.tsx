@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
 
 export default function AdminApiSettingsPage() {
   return (
@@ -25,6 +27,36 @@ export default function AdminApiSettingsPage() {
             </div>
             <Button>Save Changes</Button>
           </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Stripe Configuration</CardTitle>
+                <CardDescription>Manage Stripe API keys and toggle between test and live modes.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                 <div className="space-y-2">
+                    <Label htmlFor="stripePublishableKey">Stripe Publishable Key</Label>
+                    <Input id="stripePublishableKey" placeholder="pk_test_..." />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="stripeSecretKey">Stripe Secret Key</Label>
+                    <Input id="stripeSecretKey" type="password" placeholder="sk_test_..." />
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                        <Label className="text-base">Stripe Test Mode</Label>
+                        <p className="text-sm text-muted-foreground">
+                            Use test keys to simulate payments without actual charges.
+                        </p>
+                    </div>
+                    <Switch defaultChecked/>
+                </div>
+                 <div className="flex justify-end">
+                    <Button>Save Stripe Settings</Button>
+                </div>
+            </CardContent>
         </Card>
       </div>
     </div>
