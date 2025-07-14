@@ -1,22 +1,23 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, FileText, Download, Link as LinkIcon, Upload } from 'lucide-react';
+import { Bot, FileText, Download, Target, PenSquare, Briefcase } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
-    <div className="w-full">
+    <div className="w-full bg-background text-foreground">
       <section className="bg-background">
         <div className="container mx-auto grid min-h-[calc(100vh-4rem)] items-center gap-8 px-4 py-12 md:grid-cols-2 md:px-6 lg:gap-16">
           <div className="space-y-6">
-            <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-              Craft the Perfect CV, Instantly.
+            <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+              Land Your Dream Job with an AI-Powered CV
             </h1>
             <p className="text-lg text-muted-foreground md:text-xl">
-              Stop tailoring your CV for every job application. Upload your CV, paste a job link, and let our AI create a perfectly matched, ATS-friendly resume and cover letter for you.
+              Stop spending hours tailoring your resume. Upload your CV, provide a job description, and let our AI craft a perfectly optimized, ATS-friendly CV and cover letter in seconds.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
                 <Link href="/dashboard">Get Started Now</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
@@ -24,57 +25,70 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          <div className="flex justify-center">
-            <Bot className="h-64 w-64 text-primary opacity-20" />
+          <div className="flex justify-center items-center">
+            <Image 
+              src="https://placehold.co/600x400.png" 
+              alt="AI-powered CV generation"
+              width={600}
+              height={400}
+              className="rounded-xl shadow-2xl shadow-primary/20"
+              data-ai-hint="futuristic cv"
+            />
           </div>
         </div>
       </section>
 
-      <section id="features" className="w-full py-16 md:py-24">
+      <section id="features" className="w-full py-16 md:py-24 bg-secondary/20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">How It Works</h2>
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">A Smarter Way to Apply for Jobs</h2>
             <p className="mt-4 text-muted-foreground">
-              A simple three-step process to land your dream job.
+              Our intelligent platform simplifies your job application process into three easy steps.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">1. Upload & Link</CardTitle>
-                <div className="rounded-full bg-primary/10 p-2 text-primary">
-                  <Upload className="h-6 w-6" />
+            <Card className="bg-background/80 border-primary/20 backdrop-blur-sm">
+              <CardHeader>
+                 <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-primary/10 p-3 text-primary">
+                    <Briefcase className="h-6 w-6" />
+                  </div>
+                  <CardTitle className="text-lg font-medium">1. Provide Details</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Upload your existing CV in PDF or DOCX format and paste the link to the job position you're applying for.
+                  Upload your existing CV and paste the job description for the role you want. Our AI needs this context to work its magic.
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">2. AI Analysis</CardTitle>
-                <div className="rounded-full bg-primary/10 p-2 text-primary">
-                  <Bot className="h-6 w-6" />
+            <Card className="bg-background/80 border-primary/20 backdrop-blur-sm">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-primary/10 p-3 text-primary">
+                    <PenSquare className="h-6 w-6" />
+                  </div>
+                  <CardTitle className="text-lg font-medium">2. AI-Powered Tailoring</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Our AI analyzes your CV against the job description to identify key skills and experiences, then tailors your resume.
+                  Our algorithm analyzes the job's key requirements and strategically rewrites your CV to highlight your most relevant skills.
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">3. Download</CardTitle>
-                <div className="rounded-full bg-primary/10 p-2 text-primary">
-                  <Download className="h-6 w-6" />
+            <Card className="bg-background/80 border-primary/20 backdrop-blur-sm">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-primary/10 p-3 text-primary">
+                    <Target className="h-6 w-6" />
+                  </div>
+                  <CardTitle className="text-lg font-medium">3. Apply with Confidence</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Download your new, optimized CV and a custom-generated cover letter, ready to submit.
+                  Download your new, professionally tailored CV and a matching cover letter. You're now ready to stand out and get hired.
                 </p>
               </CardContent>
             </Card>
@@ -84,13 +98,13 @@ export default function Home() {
 
       <section className="bg-background py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Ready to Get Hired?</h2>
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Ready to Accelerate Your Career?</h2>
             <p className="mt-4 text-muted-foreground">
               Join hundreds of successful professionals who have supercharged their job search with CV Genius AI.
             </p>
-            <Button asChild size="lg" className="mt-6 bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href="/register">Create Your CV Now</Link>
+            <Button asChild size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20">
+              <Link href="/register">Create Your Winning CV Now</Link>
             </Button>
           </div>
         </div>
