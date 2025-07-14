@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Bot, LogOut } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 export default function Header() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await logout();
@@ -29,12 +31,41 @@ export default function Header() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
 
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      const element = document.getElementById(id);
+      element?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      router.push(`/#${id}`);
+    }
+  };
+
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '#features', label: 'How it works', scroll: true },
+    { href: '#about', label: 'About Us' },
+    { href: '#contact', label: 'Contact Us' },
+  ];
+
   return (
     <header className="flex h-16 w-full items-center justify-between border-b bg-card px-4 md:px-6">
       <Link href="/" className="flex items-center gap-2">
         <Bot className="h-6 w-6 text-primary" />
         <span className="font-headline text-lg font-semibold">CV Genius AI</span>
       </Link>
+      <nav className="hidden items-center gap-6 md:flex">
+        {navLinks.map((link) => (
+          <Link
+            key={link.label}
+            href={link.href}
+            onClick={(e) => link.scroll && handleScroll(e, link.href.substring(1))}
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
       <div className="hidden items-center gap-4 md:flex">
         {user ? (
           <DropdownMenu>
@@ -56,6 +87,9 @@ export default function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                Dashboard
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
@@ -86,30 +120,47 @@ export default function Header() {
               <Bot className="h-6 w-6 text-primary" />
               <span className="font-headline text-lg font-semibold">CV Genius AI</span>
             </Link>
-            {user ? (
-                <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-2">
-                        <Avatar>
-                            <AvatarImage src={user.photoURL || ''} />
-                            <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-medium">{user.displayName}</p>
-                            <p className="text-sm text-muted-foreground">{user.email}</p>
+
+            <nav className="grid gap-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => link.scroll && handleScroll(e, link.href.substring(1))}
+                  className="text-lg font-medium hover:underline"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="border-t pt-6">
+                {user ? (
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-2">
+                            <Avatar>
+                                <AvatarImage src={user.photoURL || ''} />
+                                <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-medium">{user.displayName}</p>
+                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                            </div>
                         </div>
+                         <Button onClick={() => router.push('/dashboard')}>Go to Dashboard</Button>
+                        <Button onClick={handleLogout} variant="outline">Log out</Button>
                     </div>
-                    <Button onClick={handleLogout}>Log out</Button>
-                </div>
-            ) : (
-                <>
-                    <Link href="/login" className="text-lg font-medium hover:underline">
-                    Login
-                    </Link>
-                    <Link href="/register" className="text-lg font-medium hover:underline">
-                    Register
-                    </Link>
-                </>
-            )}
+                ) : (
+                    <div className="grid gap-4">
+                        <Button asChild>
+                            <Link href="/login">Login</Link>
+                        </Button>
+                        <Button asChild variant="outline">
+                            <Link href="/register">Register</Link>
+                        </Button>
+                    </div>
+                )}
+            </div>
           </div>
         </SheetContent>
       </Sheet>
