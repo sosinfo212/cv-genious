@@ -1,10 +1,26 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, FileText, Download, Target, PenSquare, Briefcase } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Check, Bot, FileText, Download, Target, PenSquare, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Home() {
+  const features = [
+    { name: 'AI-Powered CV Tailoring', included: true },
+    { name: 'Custom Cover Letter Generation', included: true },
+    { name: 'ATS-Friendly Templates', included: true },
+    { name: 'Unlimited Downloads', included: false },
+    { name: 'Priority Support', included: false },
+  ];
+
+  const proFeatures = [
+    { name: 'AI-Powered CV Tailoring', included: true },
+    { name: 'Custom Cover Letter Generation', included: true },
+    { name: 'ATS-Friendly Templates', included: true },
+    { name: 'Unlimited Downloads', included: true },
+    { name: 'Priority Support', included: true },
+  ];
+
   return (
     <div className="w-full bg-background text-foreground">
       <section className="bg-background">
@@ -96,7 +112,110 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-background py-16 md:py-24">
+      <section id="pricing" className="w-full py-16 md:py-24">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Choose Your Plan</h2>
+            <p className="mt-4 text-muted-foreground">
+              Simple, transparent pricing. No hidden fees.
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3 md:items-start">
+            <Card className="bg-background/80 border-border backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Free</CardTitle>
+                <CardDescription>Get started with our basic features.</CardDescription>
+                <div className="pt-4">
+                  <span className="text-4xl font-bold">$0</span>
+                  <span className="text-sm text-muted-foreground">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4">
+                  {features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <Check className={`h-5 w-5 ${feature.included ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <span className={!feature.included ? 'text-muted-foreground line-through' : ''}>
+                        {feature.name}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                 <Button asChild variant="outline" className="w-full">
+                  <Link href="/register">Get Started</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+            
+            <Card className="relative bg-background/80 border-primary border-2 backdrop-blur-sm shadow-2xl shadow-primary/20">
+              <div className="absolute top-0 right-4 -translate-y-1/2 rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">
+                Most Popular
+              </div>
+              <CardHeader>
+                <CardTitle>Pro</CardTitle>
+                <CardDescription>Unlock all features to supercharge your job hunt.</CardDescription>
+                <div className="pt-4">
+                  <span className="text-4xl font-bold">$19</span>
+                  <span className="text-sm text-muted-foreground">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4">
+                    {proFeatures.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary" />
+                      <span>{feature.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+               <CardFooter>
+                <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Link href="/register">Choose Pro</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-background/80 border-border backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Enterprise</CardTitle>
+                <CardDescription>For teams and businesses.</CardDescription>
+                 <div className="pt-4">
+                  <span className="text-4xl font-bold">Custom</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                    Custom solutions for your entire team. Get in touch for a personalized quote.
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-primary" />
+                    <span>Everything in Pro, plus:</span>
+                  </li>
+                  <li className="flex items-center gap-2 pl-6">
+                     <Check className="h-4 w-4 text-primary" />
+                    <span>Team management</span>
+                  </li>
+                  <li className="flex items-center gap-2 pl-6">
+                    <Check className="h-4 w-4 text-primary" />
+                    <span>Volume discounts</span>
+                  </li>
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/contact">Contact Sales</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-secondary/20 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Ready to Accelerate Your Career?</h2>
