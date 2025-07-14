@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
 const plans = [
-    { id: '1', name: 'Free', price: '$0/month', tokens: 5 },
-    { id: '2', name: 'Pro', price: '$19/month', tokens: 50 },
-    { id: '3', name: 'Enterprise', price: 'Contact us', tokens: -1 }, // -1 for unlimited
+    { id: '1', name: 'Free', description: 'Get started with our basic features.', price: '$0/month', tokens: 5 },
+    { id: '2', name: 'Pro', description: 'Unlock all features to supercharge your job hunt.', price: '$19/month', tokens: 50 },
+    { id: '3', name: 'Enterprise', description: 'For teams and businesses.', price: 'Contact us', tokens: -1 }, // -1 for unlimited
 ];
 
 export default function AdminPricingPage() {
@@ -28,7 +28,11 @@ export default function AdminPricingPage() {
             {plans.map((plan, index) => (
               <form key={plan.id} className="space-y-4 rounded-lg border p-6">
                  <h3 className="text-xl font-semibold">{plan.name} Plan</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div className="space-y-2">
+                    <Label htmlFor={`description-${plan.id}`}>Description</Label>
+                    <Input id={`description-${plan.id}`} defaultValue={plan.description} />
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor={`price-${plan.id}`}>Price</Label>
                         <Input id={`price-${plan.id}`} defaultValue={plan.price} />
