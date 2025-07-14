@@ -2,7 +2,6 @@
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -38,20 +37,9 @@ export default function AdminGeneralSettingsPage() {
                 </div>
                 <Switch defaultChecked />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>API Keys</CardTitle>
-            <CardDescription>Manage API keys for third-party integrations.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="geminiApiKey">Gemini API Key</Label>
-              <Input id="geminiApiKey" type="password" defaultValue="************" />
+             <div className="flex justify-end pt-4">
+                <Button>Save Changes</Button>
             </div>
-            <Button>Save Changes</Button>
           </CardContent>
         </Card>
       </div>

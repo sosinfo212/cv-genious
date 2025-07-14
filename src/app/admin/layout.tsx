@@ -18,7 +18,7 @@ import {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, Tag,SlidersHorizontal, SidebarOpen } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Tag,SlidersHorizontal, KeyRound } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 
 export default function AdminLayout({
@@ -37,6 +37,7 @@ export default function AdminLayout({
   const settingsSubMenuItems = [
     { href: '/admin/settings/general', label: 'General', icon: SlidersHorizontal },
     { href: '/admin/settings/pricing', label: 'Pricing', icon: Tag },
+    { href: '/admin/settings/api', label: 'API Keys', icon: KeyRound },
   ];
 
 
