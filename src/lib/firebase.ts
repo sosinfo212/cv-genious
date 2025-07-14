@@ -2,12 +2,12 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyBJLymps6Lw3wD27FUCqTrzS0w40qwma9U",
+  authDomain: "cv-genius-ai.firebaseapp.com",
+  projectId: "cv-genius-ai",
+  storageBucket: "cv-genius-ai.firebasestorage.app",
+  messagingSenderId: "73603850304",
+  appId: "1:73603850304:web:9377802bd3794eaab8ffa5"
 };
 
 // Initialize Firebase
