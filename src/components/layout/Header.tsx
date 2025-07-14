@@ -32,8 +32,8 @@ export default function Header() {
   }
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
     if (pathname === '/') {
-      e.preventDefault();
       const element = document.getElementById(id);
       element?.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -43,9 +43,9 @@ export default function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '#features', label: 'How it works', scroll: true },
-    { href: '#about', label: 'About Us' },
-    { href: '#contact', label: 'Contact Us' },
+    { href: '/#features', label: 'How it works', scroll: true },
+    { href: '/about', label: 'About Us' },
+    { href: '/contact', label: 'Contact Us' },
   ];
 
   return (
@@ -59,7 +59,7 @@ export default function Header() {
           <Link
             key={link.label}
             href={link.href}
-            onClick={(e) => link.scroll && handleScroll(e, link.href.substring(1))}
+            onClick={(e) => link.scroll && handleScroll(e, link.href.substring(2))}
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             {link.label}
@@ -126,7 +126,7 @@ export default function Header() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  onClick={(e) => link.scroll && handleScroll(e, link.href.substring(1))}
+                  onClick={(e) => link.scroll && handleScroll(e, link.href.substring(2))}
                   className="text-lg font-medium hover:underline"
                 >
                   {link.label}
