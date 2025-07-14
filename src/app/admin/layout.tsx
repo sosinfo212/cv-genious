@@ -12,10 +12,13 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarInset,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
 } from '@/components/ui/sidebar';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Tag,SlidersHorizontal, SidebarOpen } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 
 export default function AdminLayout({
@@ -29,8 +32,13 @@ export default function AdminLayout({
   const menuItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Users', icon: Users },
-    { href: '/admin/settings', label: 'Settings', icon: Settings },
   ];
+  
+  const settingsSubMenuItems = [
+    { href: '/admin/settings/general', label: 'General', icon: SlidersHorizontal },
+    { href: '/admin/settings/pricing', label: 'Pricing', icon: Tag },
+  ];
+
 
   return (
     <SidebarProvider>
@@ -56,6 +64,28 @@ export default function AdminLayout({
                 </Link>
               </SidebarMenuItem>
             ))}
+             <Accordion type="single" collapsible defaultValue={pathname.startsWith('/admin/settings') ? 'settings' : ''} className="w-full">
+                <AccordionItem value="settings" className="border-none">
+                     <AccordionTrigger className="[&[data-state=open]>svg]:-rotate-180 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 no-underline">
+                        <Settings />
+                        <span className="group-data-[collapsible=icon]:hidden">Settings</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-0">
+                        <SidebarMenuSub>
+                            {settingsSubMenuItems.map(item => (
+                                 <SidebarMenuSubButton asChild key={item.href}>
+                                     <Link href={item.href}>
+                                        <SidebarMenuButton isActive={pathname === item.href} variant="ghost" className="w-full justify-start h-8">
+                                            <item.icon />
+                                            <span>{item.label}</span>
+                                        </SidebarMenuButton>
+                                     </Link>
+                                 </SidebarMenuSubButton>
+                            ))}
+                        </SidebarMenuSub>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
