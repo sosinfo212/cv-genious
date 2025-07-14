@@ -44,6 +44,7 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/#features', label: 'How it works', scroll: true },
+    { href: '/#pricing', label: 'Pricing', scroll: true },
     { href: '/about', label: 'About Us' },
     { href: '/contact', label: 'Contact Us' },
   ];
@@ -59,7 +60,7 @@ export default function Header() {
           <Link
             key={link.label}
             href={link.href}
-            onClick={(e) => link.scroll && handleScroll(e, link.href.substring(2))}
+            onClick={(e) => link.scroll && handleScroll(e, link.href.substring(link.scroll ? 2 : 0))}
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             {link.label}
@@ -87,7 +88,7 @@ export default function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+              <DropdownMenuItem onClick={() => router.push(user.role === 'admin' ? '/admin' : '/dashboard')}>
                 Dashboard
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
@@ -126,7 +127,7 @@ export default function Header() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  onClick={(e) => link.scroll && handleScroll(e, link.href.substring(2))}
+                   onClick={(e) => link.scroll && handleScroll(e, link.href.substring(link.scroll ? 2 : 0))}
                   className="text-lg font-medium hover:underline"
                 >
                   {link.label}
@@ -147,7 +148,7 @@ export default function Header() {
                                 <p className="text-sm text-muted-foreground">{user.email}</p>
                             </div>
                         </div>
-                         <Button onClick={() => router.push('/dashboard')}>Go to Dashboard</Button>
+                         <Button onClick={() => router.push(user.role === 'admin' ? '/admin' : '/dashboard')}>Go to Dashboard</Button>
                         <Button onClick={handleLogout} variant="outline">Log out</Button>
                     </div>
                 ) : (

@@ -3,9 +3,11 @@
 import { useEffect, useState, createContext, useContext, ReactNode, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Loader } from 'lucide-react';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
-// Define a simple User type for our mock auth
 interface User {
+  uid: string;
   displayName: string | null;
   email: string | null;
   photoURL?: string | null;
@@ -15,86 +17,74 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (user: { email: string; displayName?: string }) => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
   logout: async () => {},
 });
 
 const protectedRoutes = ['/dashboard', '/admin'];
 const authRoutes = ['/login', '/register'];
+const adminEmail = 'admin@admin.com'; // Hardcoded admin email for this example
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Simulate initial auth check
-  useEffect(() => {
-    setTimeout(() => {
-      // In a real app, you might check localStorage here
-      setLoading(false);
-    }, 500);
-  }, []);
-  
-  const login = useCallback(async (userInfo: { email: string; displayName?: string }) => {
-    setLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const isAdmin = userInfo.email === 'admin@admin.com';
-    setUser({
-        email: userInfo.email,
-        displayName: userInfo.displayName || (isAdmin ? 'Admin' : 'Test User'),
-        photoURL: null,
-        role: isAdmin ? 'admin' : 'user',
-    });
-    setLoading(false);
-    router.push(isAdmin ? '/admin' : '/dashboard');
-  }, [router]);
-
   const logout = useCallback(async () => {
     setLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setUser(null);
-    setLoading(false);
+    await auth.signOut();
     router.push('/login');
   }, [router]);
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
+        const isAdmin = firebaseUser.email === adminEmail;
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          role: isAdmin ? 'admin' : 'user',
+        });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
 
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
-    if (loading || !mounted) return;
+    if (loading) return;
 
     const path = pathname.toLowerCase();
     const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
     const isAdminRoute = path.startsWith('/admin');
     const isAuthRoute = authRoutes.includes(path);
 
-    if (isProtectedRoute && !user) {
-      router.push('/login');
+    if (!user) { // If user is not logged in
+        if(isProtectedRoute) {
+            router.push('/login');
+        }
+    } else { // If user is logged in
+        if (isAuthRoute) {
+            router.push(user.role === 'admin' ? '/admin' : '/dashboard');
+        }
+        if (isAdminRoute && user.role !== 'admin') {
+            router.push('/dashboard'); // Non-admin trying to access admin routes
+        }
     }
+  }, [loading, user, pathname, router]);
 
-    if (isAdminRoute && user?.role !== 'admin') {
-        router.push('/dashboard');
-    }
-
-    if (isAuthRoute && user) {
-      router.push(user.role === 'admin' ? '/admin' : '/dashboard');
-    }
-  }, [loading, user, pathname, router, mounted]);
-
-  if (loading || !mounted) {
+  if (loading) {
     return (
         <div className="flex h-screen items-center justify-center">
             <Loader className="h-8 w-8 animate-spin" />
@@ -103,16 +93,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
   
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  if (isProtectedRoute && !user) {
+  if (isProtectedRoute && !user && !loading) {
+    // This check prevents a flash of content while redirecting
     return (
-        <div className="flex h-screen items-center justify-center">
-            <Loader className="h-8 w-8 animate-spin" />
-        </div>
-    );
+      <div className="flex h-screen items-center justify-center">
+          <Loader className="h-8 w-8 animate-spin" />
+      </div>
+  );
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );

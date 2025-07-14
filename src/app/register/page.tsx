@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +16,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from "@/hooks/use-toast";
 import { useState } from 'react';
 import { Loader } from 'lucide-react';
-import { useAuth } from '@/components/auth/auth-provider';
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required.' }),
@@ -26,7 +28,6 @@ export default function RegisterPage() {
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -41,8 +42,10 @@ export default function RegisterPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
         try {
-            await login({
-                email: values.email,
+            const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+            const user = userCredential.user;
+            
+            await updateProfile(user, {
                 displayName: `${values.firstName} ${values.lastName}`,
             });
 
@@ -50,12 +53,17 @@ export default function RegisterPage() {
                 title: "Account Created",
                 description: "You have been successfully registered.",
             });
+            // The AuthProvider will handle the redirect
         } catch (error: any) {
             console.error(error);
+            let errorMessage = "An unexpected error occurred. Please try again.";
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = "This email address is already in use.";
+            }
             toast({
                 variant: "destructive",
                 title: "Registration Failed",
-                description: error.message || "An unexpected error occurred. Please try again.",
+                description: errorMessage,
             });
         } finally {
             setIsLoading(false);
