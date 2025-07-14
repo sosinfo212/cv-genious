@@ -72,7 +72,9 @@ export default function DashboardLayout({
                             <p className="text-xs text-muted-foreground">Tokens Left</p>
                         </div>
                         <Progress value={23} className="mt-2 h-2" />
-                        <Button size="sm" className="w-full mt-4">Upgrade</Button>
+                        <Button asChild size="sm" className="w-full mt-4">
+                            <Link href="/#pricing">Upgrade</Link>
+                        </Button>
                     </CardContent>
                 </Card>
             </div>
