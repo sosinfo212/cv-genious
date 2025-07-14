@@ -6,6 +6,21 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { MoreHorizontal, Edit, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+const plans = [
+    { id: '1', name: 'Free', price: '$0/month', tokens: 5 },
+    { id: '2', name: 'Pro', price: '$19/month', tokens: 50 },
+    { id: '3', name: 'Enterprise', price: 'Custom', tokens: -1 }, // -1 for unlimited
+];
+
 
 export default function AdminSettingsPage() {
   return (
@@ -39,6 +54,56 @@ export default function AdminSettingsPage() {
                 <Switch defaultChecked />
             </div>
           </CardContent>
+        </Card>
+        
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Plan Management</CardTitle>
+                    <CardDescription>Manage user subscription plans and packages.</CardDescription>
+                </div>
+                <Button>Add New Plan</Button>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Plan Name</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Tokens</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {plans.map((plan) => (
+                            <TableRow key={plan.id}>
+                                <TableCell className="font-medium">{plan.name}</TableCell>
+                                <TableCell>{plan.price}</TableCell>
+                                <TableCell>{plan.tokens === -1 ? 'Unlimited' : plan.tokens}</TableCell>
+                                <TableCell className="text-right">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon">
+                                                <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem>
+                                                <Edit className="mr-2 h-4 w-4" />
+                                                Edit
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="text-destructive">
+                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                Delete
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
         </Card>
 
         <Card>
