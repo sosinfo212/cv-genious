@@ -1,3 +1,4 @@
+
 // src/app/dashboard/page.tsx
 'use client';
 
@@ -83,8 +84,8 @@ export default function DashboardPage() {
        <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">CV Generator</h2>
       </div>
-      <div className="grid gap-8 md:grid-cols-12">
-        <div className="md:col-span-4 lg:col-span-3">
+      <div className="space-y-8">
+        <div>
           <Card>
             <CardHeader>
               <CardTitle>Create New</CardTitle>
@@ -111,7 +112,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-        <div className="md:col-span-8 lg:col-span-9">
+        <div>
           {state.data ? (
             <Tabs defaultValue="cv">
               <TabsList className="grid w-full grid-cols-2">
