@@ -63,7 +63,7 @@ export default function DashboardPage() {
   }
 
   const handleDownload = (content: string, filename: string) => {
-    const blob = new Blob([content], { type: 'text/plain' });
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -101,7 +101,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="cv">Upload Your CV</Label>
-                  <Input id="cv" name="cv" type="file" required accept=".pdf,.doc,.docx" />
+                  <Input id="cv" name="cv" type="file" required accept=".pdf,.doc,.docx,.txt" />
                   {state.errors?.cv && (
                     <p className="text-sm font-medium text-destructive">{state.errors.cv}</p>
                   )}
@@ -114,22 +114,16 @@ export default function DashboardPage() {
         <div className="md:col-span-8 lg:col-span-9">
           {state.data ? (
             <Tabs defaultValue="cv">
-              <div className="flex items-center justify-between">
-                <TabsList>
-                  <TabsTrigger value="cv">Tailored CV</TabsTrigger>
-                  <TabsTrigger value="letter">Cover Letter</TabsTrigger>
-                </TabsList>
-                <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => handleDownload(state.data?.tailoredCv ?? '', 'tailored-cv')}>
-                        <Download className="mr-2 h-4 w-4"/>
-                        Download CV
-                    </Button>
-                     <Button variant="outline" size="sm" onClick={() => handleDownload(state.data?.coverLetter ?? '', 'cover-letter')}>
-                        <Download className="mr-2 h-4 w-4"/>
-                        Download Letter
-                    </Button>
-                </div>
-              </div>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="cv">
+                    <FileText className="mr-2" />
+                    Tailored CV
+                </TabsTrigger>
+                <TabsTrigger value="letter">
+                    <FileText className="mr-2" />
+                    Cover Letter
+                </TabsTrigger>
+              </TabsList>
               <TabsContent value="cv" className="mt-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
@@ -137,12 +131,17 @@ export default function DashboardPage() {
                       <CardTitle>Tailored CV</CardTitle>
                       <CardDescription>Your CV optimized for the job.</CardDescription>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => handleCopy(state.data?.tailoredCv ?? '', 'cv')}>
-                        {copied === 'cv' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="icon" onClick={() => handleCopy(state.data?.tailoredCv ?? '', 'cv')}>
+                            {copied === 'cv' ? <Check className="text-green-500" /> : <Copy />}
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => handleDownload(state.data?.tailoredCv ?? '', 'tailored-cv')}>
+                            <Download />
+                        </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <Textarea className="min-h-[60vh] font-mono text-sm" defaultValue={state.data.tailoredCv} />
+                    <Textarea className="min-h-[60vh] font-mono text-sm" readOnly value={state.data.tailoredCv} />
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -153,18 +152,23 @@ export default function DashboardPage() {
                       <CardTitle>Cover Letter</CardTitle>
                       <CardDescription>A compelling letter to introduce you.</CardDescription>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => handleCopy(state.data?.coverLetter ?? '', 'letter')}>
-                        {copied === 'letter' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="icon" onClick={() => handleCopy(state.data?.coverLetter ?? '', 'letter')}>
+                           {copied === 'letter' ? <Check className="text-green-500" /> : <Copy />}
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => handleDownload(state.data?.coverLetter ?? '', 'cover-letter')}>
+                           <Download />
+                        </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <Textarea className="min-h-[60vh] text-sm leading-relaxed" defaultValue={state.data.coverLetter} />
+                    <Textarea className="min-h-[60vh] text-sm leading-relaxed" readOnly value={state.data.coverLetter} />
                   </CardContent>
                 </Card>
               </TabsContent>
             </Tabs>
           ) : (
-            <div className="flex h-full min-h-[70vh] items-center justify-center rounded-lg border border-dashed">
+            <Card className="flex h-full min-h-[70vh] items-center justify-center border-dashed">
               <div className="text-center">
                 <div className="rounded-full bg-secondary p-4 inline-block">
                     <FileText className="h-12 w-12 text-muted-foreground" />
@@ -174,7 +178,7 @@ export default function DashboardPage() {
                   Fill out the form to get started.
                 </p>
               </div>
-            </div>
+            </Card>
           )}
         </div>
       </div>
