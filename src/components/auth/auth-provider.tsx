@@ -9,6 +9,7 @@ interface User {
   displayName: string | null;
   email: string | null;
   photoURL?: string | null;
+  role?: 'admin' | 'user';
 }
 
 interface AuthContextType {
@@ -25,7 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
 });
 
-const protectedRoutes = ['/dashboard'];
+const protectedRoutes = ['/dashboard', '/admin'];
 const authRoutes = ['/login', '/register'];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -51,13 +52,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500));
+    const isAdmin = userInfo.email === 'admin@admin.com';
     setUser({
         email: userInfo.email,
-        displayName: userInfo.displayName || 'Test User',
+        displayName: userInfo.displayName || (isAdmin ? 'Admin' : 'Test User'),
         photoURL: null,
+        role: isAdmin ? 'admin' : 'user',
     });
     setLoading(false);
-    router.push('/dashboard');
+    router.push(isAdmin ? '/admin' : '/dashboard');
   }, [router]);
 
   const logout = useCallback(async () => {
@@ -73,15 +76,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (loading || !mounted) return;
 
-    const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-    const isAuthRoute = authRoutes.includes(pathname);
+    const path = pathname.toLowerCase();
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+    const isAdminRoute = path.startsWith('/admin');
+    const isAuthRoute = authRoutes.includes(path);
 
     if (isProtectedRoute && !user) {
       router.push('/login');
     }
 
+    if (isAdminRoute && user?.role !== 'admin') {
+        router.push('/dashboard');
+    }
+
     if (isAuthRoute && user) {
-      router.push('/dashboard');
+      router.push(user.role === 'admin' ? '/admin' : '/dashboard');
     }
   }, [loading, user, pathname, router, mounted]);
 
