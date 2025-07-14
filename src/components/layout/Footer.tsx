@@ -18,10 +18,10 @@ export default function Footer() {
           {currentYear ? `© ${currentYear} CV Genius AI. All rights reserved.` : `© CV Genius AI. All rights reserved.`}
         </p>
         <nav className="flex gap-4 sm:gap-6">
-          <Link href="#" className="text-sm hover:underline" prefetch={false}>
+          <Link href="/terms" className="text-sm hover:underline" prefetch={false}>
             Terms of Service
           </Link>
-          <Link href="#" className="text-sm hover:underline" prefetch={false}>
+          <Link href="/privacy" className="text-sm hover:underline" prefetch={false}>
             Privacy Policy
           </Link>
         </nav>
