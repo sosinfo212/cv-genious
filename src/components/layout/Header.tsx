@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Bot, LogOut } from 'lucide-react';
+import { Menu, Bot, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -90,6 +90,13 @@ export default function Header() {
               <DropdownMenuItem onClick={() => router.push('/dashboard')}>
                 Dashboard
               </DropdownMenuItem>
+              {user.role === 'admin' && (
+                <DropdownMenuItem onClick={() => router.push('/admin')}>
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  Admin Panel
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>

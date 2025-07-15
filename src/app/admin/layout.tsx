@@ -42,7 +42,7 @@ export default function AdminLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-full">
+      <div className="flex h-full min-h-screen">
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2 group-data-[collapsible=true]:hidden">
